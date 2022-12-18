@@ -45,16 +45,25 @@ object Payroll{
 fun testPayRoll(){
     println(Payroll.allEmployee)
     Payroll.calculateSalary()
-    val people = listOf(People("a"), People("b"))
-    println(people.sortedWith(People.NameComparator))
+    val people = listOf(People("c"), People("b"), People("a"))
+    //println(people.sortedWith(People.NameComparator))
+    println(people.sorted())
+    // p1 > p2 는 p1.compareTo(p2) > 0 와 같다.
+    var amIFirst = People("akjfkej") > People( "vkkdkek")
 }
 
 /**
  * 중첩객체를 이용해 comparator 구현
+ * 또는
+ * Comparable#compareTo 를 구현
  */
-data class People(val name: String){
+data class People(val name: String): Comparable<People>{
     object NameComparator: Comparator<People>{
         override fun compare(p0: People, p1: People): Int =
             p0.name.compareTo(p1.name)
+    }
+
+    override fun compareTo(other: People): Int {
+        return compareValuesBy(this, other, People::name )
     }
 }

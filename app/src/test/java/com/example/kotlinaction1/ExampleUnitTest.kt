@@ -5,6 +5,7 @@ import org.junit.Test
 import org.junit.Assert.*
 import java.beans.PropertyChangeListener
 import java.time.LocalDate
+import java.util.*
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -57,6 +58,62 @@ class ExampleUnitTest {
         )
         p.age = 36
         p.salary = 9800
+
+    }
+
+    @Test
+    fun highOrderTest(){
+        //twoAndThree { a, b -> a * b }
+
+//        println("su_cheo_l".filter {
+//            it in 'a'..'z' || it in 'A'..'Z'
+//        })
+
+        val letters = listOf("Sucheol", "Jiyoung", "Jihyo")
+        println(letters.joinToString(separator = " - "))
+        println(letters.joinToString(
+            separator = ", ",
+            preFix = "My Family : ",
+            transform = {
+                it.uppercase(Locale.getDefault())
+            }
+        ))
+    }
+
+    @Test
+    fun highOrderTest2(){
+        var calculator = getShippingCostCalculator(Delivery.EXPEDITED)
+        println(calculator(Order(30)))
+
+        val contacts = listOf(
+            Person("Dmitry", "Choi", "010-6390-4686"),
+            Person("Kornel", "Park", null)
+        )
+        val contactListFilters = ContactListFilters()
+        with(contactListFilters){
+            prefix = "K"
+            onlyWithPhoneNumber = true
+        }
+        println(contacts.filter(contactListFilters.getPredicate()) )
+
+        val averageWindowDuration = log.filter { it.os == OS.WINDOWS }
+            .map(SiteVisit::duration)
+            .average()
+        val averageWindowDuration2 = log.averageDurationFor(OS.WINDOWS)
+        println("average : $averageWindowDuration")
+
+        //mobile 만 뽑아본다면..
+        val averageMobile = log.filter { it.os in setOf(OS.IOS, OS.ANDROID) }
+            .map(SiteVisit::duration)
+            .average()
+        println(
+            log.averageDuration { it.os == OS.WINDOWS }
+        )
+    }
+
+    @Test
+    fun inlineTest(){
+
     }
 
 }

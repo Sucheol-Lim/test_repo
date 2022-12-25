@@ -113,7 +113,24 @@ class ExampleUnitTest {
 
     @Test
     fun inlineTest(){
+        val sb = java.lang.StringBuilder()
+        sb.apply pp@{
+            listOf(1,2,4).apply {
+                this@pp.append(this.toString())
+            }
+        }
+        println(sb)
 
+        lookForAlice(listOf(Person("","Alice", "")))
+    }
+
+    @Test
+    fun testGenerics(){
+        var list: MutableList< Int> = mutableListOf(1,2,3)
+        var listInt: MutableList<out Number> = mutableListOf(3)
+
+        listInt.add(5 as Nothing)
+        println(listInt)
     }
 
 }

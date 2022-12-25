@@ -114,6 +114,12 @@ fun List<SiteVisit>.averageDurationFor(os: OS) =
 fun List<SiteVisit>.averageDuration( predicate: (SiteVisit) -> Boolean) =
     log.filter(predicate).map(SiteVisit::path)
 
+//filter 조건에 무명 함수로 넣어보기
+fun List<SiteVisit>.averageDurationFor2(os: OS) =
+    filter (fun(siteVisit) = siteVisit.os in setOf(OS.MAC, OS.WINDOWS))
+        .map(SiteVisit::duration).average()
+
+
 inline fun<T> synchronized(lock: Lock, action: () ->T): T{
     lock.lock()
     try {
@@ -136,4 +142,46 @@ class LockOwner(val lock: Lock){
     fun runUnderLock(body: () -> Unit){
         synchronized(lock, body)
     }
+}
+
+
+
+//local return 이 가능한 lamda 식
+fun lookForAlice(people: List<Person>){
+
+    //label 을 사용하면 local return 이 가능하다.
+    people.forEach label@{
+        if (it.lastName == "Alice") {
+            println("hi i'm alice1")
+            return@label
+        }
+    }
+    println("alice ... found but...1")
+
+    // label 을 안쓰고 인라인 함수 이름을 적어도 된다.
+    people.forEach {
+        if (it.lastName == "Alice") {
+            println("hi i'm alice2")
+            return@forEach
+        }
+    }
+    println("alice ... found but...2")
+
+    //무명함수는 기본적으로 local return 이다.
+    people.forEach(fun(person){
+        if (person.lastName == "Alice") {
+            println("hi i'm alice3")
+            return
+        }
+    })
+    println("alice ... found but...3")
+
+    // 요 아래 return 은 non-local return
+    people.forEach {
+        if (it.lastName == "Alice") {
+            println("hi i'm alice")
+            return
+        }
+    }
+    println("if you see this... alice not founded")
 }

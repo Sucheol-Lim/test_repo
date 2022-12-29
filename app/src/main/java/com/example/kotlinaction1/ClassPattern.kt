@@ -46,8 +46,8 @@ fun testPayRoll(){
     println(Payroll.allEmployee)
     Payroll.calculateSalary()
     val people = listOf(People("c"), People("b"), People("a"))
-    //println(people.sortedWith(People.NameComparator))
     println(people.sorted())
+    //println(people.sortedWith(People.NameComparator))
     // p1 > p2 는 p1.compareTo(p2) > 0 와 같다.
     var amIFirst = People("akjfkej") > People( "vkkdkek")
 }

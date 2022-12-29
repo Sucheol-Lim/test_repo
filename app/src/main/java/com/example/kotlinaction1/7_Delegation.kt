@@ -2,7 +2,9 @@ package com.example.kotlinaction1
 
 import java.beans.PropertyChangeListener
 import java.beans.PropertyChangeSupport
+import kotlin.properties.Delegates
 import kotlin.reflect.KProperty
+
 
 class DelegatingCollection<T>(
     innerList: Collection<T> = ArrayList<T>()
@@ -60,19 +62,6 @@ class PersonA(val name: String){
     val emails by lazy{ loadEmails(this) }
 }
 
-/** 위임 프로퍼티 구현
- */
-// PropertyChangeSupport 를 사용하기 위한 도우미 클래스
-open class PropertyChangeAware{
-    protected val changeSupport = PropertyChangeSupport(this)
-
-    fun addPropertyChangeListener(listener: PropertyChangeListener){
-        changeSupport.addPropertyChangeListener(listener)
-    }
-    fun removePropertyChangeListener(listener: PropertyChangeListener){
-        changeSupport.removePropertyChangeListener(listener)
-    }
-}
 class PersonStep1(
     val name: String, age: Int, salary: Int
 ): PropertyChangeAware(){
@@ -109,6 +98,7 @@ class ObservableProperty(
         )
     }
 }
+
 class PersonStep2(
     val name: String,
     ageParam: Int, salaryParam: Int
@@ -123,7 +113,6 @@ class PersonStep2(
         set(value) {_salary.setValue(value)}
 }
 
-
 // step3 - by keyword 를 사용해서
 class ObservablePropertyStep3(
     var propValue: Int, val changeSupport: PropertyChangeSupport
@@ -131,14 +120,13 @@ class ObservablePropertyStep3(
     operator fun getValue(personStep3: PersonStep3, property: KProperty<*>): Int {
         return propValue
     }
-
     operator fun setValue(personStep3: PersonStep3, property: KProperty<*>, newValue: Int) {
         val oldValue = propValue
         propValue = newValue
         changeSupport.firePropertyChange(property.name, oldValue, newValue)
     }
-
 }
+
 
 class PersonStep3(
     val name: String, ageParam: Int, salaryParam: Int
@@ -147,6 +135,48 @@ class PersonStep3(
     var salary: Int by ObservablePropertyStep3(salaryParam, changeSupport)
 }
 
+/** 위임 프로퍼티 구현
+ */
+// PropertyChangeSupport 를 사용하기 위한 도우미 클래스
+open class PropertyChangeAware{
+    protected val changeSupport = PropertyChangeSupport(this)
 
+    fun addPropertyChangeListener(listener: PropertyChangeListener){
+        changeSupport.addPropertyChangeListener(listener)
+    }
+    fun removePropertyChangeListener(listener: PropertyChangeListener){
+        changeSupport.removePropertyChangeListener(listener)
+    }
+}
 
+class PersonStep4(
+    val name: String, ageParam: Int, salaryParam: Int
+): PropertyChangeAware(){
+    private val observer = {
+        prop: KProperty<*>, oldValue:Int, newValue:Int ->
+            changeSupport.firePropertyChange(prop.name, oldValue, newValue)
+    }
+    //var age: Int by Delegates.observable(ageParam,observer)
+    var age: Int by PropertyDelegate(ageParam)
+    var salary: Int by Delegates.observable(salaryParam, observer)
+}
 
+class PropertyDelegate(
+    var propValue: Int
+){
+    operator fun getValue(personStep4: PersonStep4, property: KProperty<*>): Int {
+        return propValue
+    }
+    operator fun setValue(personStep4: PersonStep4, property: KProperty<*>, newValue: Int) {
+        propValue = newValue + newValue
+    }
+}
+
+class Persson{
+    private val _attributes = hashMapOf<String, String>()
+    fun setAttribute(attrName: String, value: String){
+        _attributes[attrName] = value;
+    }
+    val name: String by _attributes
+    val company: String by _attributes
+}

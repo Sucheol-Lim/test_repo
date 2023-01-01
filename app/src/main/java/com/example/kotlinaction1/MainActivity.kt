@@ -2,13 +2,30 @@ package com.example.kotlinaction1
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
     }
-//    val test: Test = Test("sucheol")
+    @Inject
+    lateinit var coffeeMaker: CoffeeMaker
+
+    override fun onStart() {
+        super.onStart()
+        testCoffeeMaker()
+    }
+    private fun testCoffeeMaker(){
+        if (::coffeeMaker.isInitialized) {
+            coffeeMaker.brew()
+        } else {
+            Log.d("MainActivity", "testCoffeeMaker: not initialized")
+        }
+    }
 }
 
 sealed class Expr(val id: Int){

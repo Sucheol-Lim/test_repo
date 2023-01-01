@@ -133,4 +133,19 @@ class ExampleUnitTest {
         println(listInt)
     }
 
+    @Test
+    fun testCoroutines(){
+        //testGlobalScope()
+        //testBlockingGlobalScope()
+        //yieldExampleCall()
+        //sumAllAsyncCall()
+        //coroutineContextTest()
+        coroutineBenchTest()
+        threadBenchTest()
+    }
+
+    @Test
+    fun testKotlinBase(){
+        addLanguage("c++")
+    }
 }

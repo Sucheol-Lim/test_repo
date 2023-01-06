@@ -148,4 +148,9 @@ class ExampleUnitTest {
     fun testKotlinBase(){
         addLanguage("c++")
     }
+
+    @Test
+    fun testScopeMethod(){
+        applySample()
+    }
 }
